@@ -18,3 +18,5 @@ class MergeTask(object):
 
         branches = self.get_branch_names()
         subprocess.check_call(['git', 'merge'] + branches)
+
+task = MergeTask
