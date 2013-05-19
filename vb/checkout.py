@@ -125,12 +125,23 @@ class CheckoutTask(BaseTask):
                              self.branch, rmitem.rbranch],
                             cwd=self.path)
 
+        commands = list(
+            ['git', 'remote', 'add', '-f', remote, url]
+            for (remote, url) in remotes.items())
+        runner = self.run_commands_fg if self.fg else self.run_commands_bg
+        runner(commands)
+
+    def run_commands_bg(self, commands):
         with open(os.devnull, 'w') as devnull:
             outfile = devnull
-            for (remote, url) in remotes.items():
+            for args in commands:
                 self.Popen(
-                    ['git', 'remote', 'add', '-f', remote, url],
+                    args, cwd=self.path,
                     stdin=devnull, stdout=outfile, stderr=self.sp.PIPE)
+
+    def run_commands_fg(self, commands):
+        for args in commands:
+            self.check_call(args, cwd=self.path)
 
     def call_at_main(self, *args, **kwds):
         self.check_call(*args, **kwds)

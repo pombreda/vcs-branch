@@ -16,6 +16,12 @@ class CheckoutApp(TaskRunnerApp):
             '--existing', '-e', action='store_true', help="""
             Use existing BRANCH instead of creating the new one.
             """)
+        parser.add_argument(
+            '--fg', help="""
+            Run ``git remote add -f ...`` at foreground after
+            ``git clone ...`` is finished.  Otherwise, these are done
+            at background in parallel.
+            """)
 
 
 class MergeApp(TaskRunnerApp):
