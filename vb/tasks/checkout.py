@@ -114,15 +114,14 @@ class CheckoutTask(BaseTask):
         self.call_at_clone(['git', 'remote', 'rename', 'origin', self.locmain])
 
         try:
-            rbranch = rmitem.rbranch
-            url = remotes.pop(rbranch)
+            remote = rmitem.remote
+            url = remotes.pop(remote)
         except (AttributeError, KeyError):
             pass
         else:
-            self.call_at_clone(['git', 'remote', 'add', '-f', rbranch, url])
-            self.call(['git', 'branch', '--set-upstream',
-                             self.branch, rmitem.rbranch],
-                            cwd=self.path)
+            self.call_at_clone(['git', 'remote', 'add', '-f', remote, url])
+            self.call_at_clone(['git', 'branch', '--set-upstream',
+                                self.branch, rmitem.rbranch])
 
         commands = list(
             ['git', 'remote', 'add', '-f', remote, url]
