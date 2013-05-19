@@ -14,9 +14,18 @@ class CheckoutApp(TaskRunnerApp):
         parser.add_argument('branch')
 
 
+class MergeApp(TaskRunnerApp):
+
+    command = 'merge'
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            'workspaces', metavar='workspace', nargs='+')
+
+
 class VBApp(BaseApplication):
 
-    subappclasses = [InitializeApp, CheckoutApp]
+    subappclasses = [InitializeApp, CheckoutApp, MergeApp]
 
     def __init__(self):
         self.subapps = [c() for c in self.subappclasses]
