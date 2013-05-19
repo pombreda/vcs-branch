@@ -3,7 +3,7 @@ from .core import RootApp, TaskRunnerApp
 
 def add_argument_fg(parser):
     parser.add_argument(
-        '--fg', help="""
+        '--fg', action='store_true', help="""
         Run ``git remote add -f ...`` at foreground after
         ``git clone ...`` is finished.  Otherwise, these are done
         at background in parallel.
