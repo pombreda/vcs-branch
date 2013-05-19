@@ -1,6 +1,8 @@
 import logging
 import argparse
 
+_unspecified = object()
+
 _logger = None
 LOG_LEVEL_NAMES = [
     'CRITICAL', 'FATAL', 'ERROR', 'WARNING', 'WARN', 'INFO', 'DEBUG', 'NOTSET']
@@ -36,21 +38,31 @@ class BaseApplication(object):
     def run(self):
         self.do_run(**self.parse_args())
 
-    def do_run(self, **_):
-        pass
+    def do_run(self, **kwds):
+        return kwds
 
 
 class RootApp(BaseApplication):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--log-level', default='INFO', choices=LOG_LEVEL_NAMES)
+            '--log-level', default=_unspecified, choices=LOG_LEVEL_NAMES,
+            help="Set logging level. (default: WARN)")
+        parser.add_argument(
+            '--verbose', '-v', action='count',
+            help="""
+            Alias for --log-level.  -v: INFO; -vv: DEBUG; -vvv: NOTSET
+            """)
 
-    def do_run(self, log_level, **kwds):
-        level = getattr(logging, log_level.upper(), log_level)
+    def do_run(self, log_level, verbose, **kwds):
+        if log_level is _unspecified:
+            if verbose:
+                log_level = {1: 'INFO', 2: 'DEBUG'}.get(verbose, 0)
+            else:
+                log_level = 'WARN'
         logger = get_logger()
-        logger.setLevel(level)
-        super(RootApp, self).do_run(**kwds)
+        logger.setLevel(log_level)
+        return super(RootApp, self).do_run(**kwds)
 
 
 class TaskRunnerApp(BaseApplication):
