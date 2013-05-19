@@ -14,6 +14,9 @@ def get_logger():
         hndlr = logging.StreamHandler()
         hndlr.setLevel(0)
 
+        formatter = logging.Formatter("%(levelname)s %(message)s")
+        hndlr.setFormatter(formatter)
+
         _logger = logging.getLogger('vb')
         _logger.addHandler(hndlr)
     return _logger
