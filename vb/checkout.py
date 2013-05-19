@@ -39,9 +39,10 @@ class GitBranches(object):
             if item.branch == branch:
                 return item
 
-    def get(self):
+    def load(self):
         output = subprocess.check_output(['git', 'branch', '-vv'])
         self.parsed = list(self._Branch(*i) for i in self.parse(output))
+        return self
 
     @staticmethod
     def parse(output):
@@ -100,9 +101,7 @@ class CheckoutTask(object):
 
     @staticmethod
     def get_branches():
-        branches = GitBranches()
-        branches.get()
-        return branches
+        return GitBranches().load()
 
     def run(self):
         self.check_init()
