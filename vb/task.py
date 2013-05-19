@@ -23,6 +23,13 @@ class Launchable(object):
     check_output = wrap_popen(subprocess.check_output)
     call = wrap_popen(subprocess.call)
 
+    def call_bg(self, *args, **kwds):
+        with open(os.devnull, 'w') as devnull:
+            outfile = devnull
+            return self.Popen(
+                *args, stdin=devnull, stdout=outfile, stderr=self.sp.PIPE,
+                **kwds)
+
 
 class BaseTask(Launchable):
 

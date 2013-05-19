@@ -1,6 +1,15 @@
 from .core import RootApp, TaskRunnerApp
 
 
+def add_argument_fg(parser):
+    parser.add_argument(
+        '--fg', help="""
+        Run ``git remote add -f ...`` at foreground after
+        ``git clone ...`` is finished.  Otherwise, these are done
+        at background in parallel.
+        """)
+
+
 class InitializeApp(TaskRunnerApp):
 
     command = 'init'
@@ -16,12 +25,7 @@ class CheckoutApp(TaskRunnerApp):
             '--existing', '-e', action='store_true', help="""
             Use existing BRANCH instead of creating the new one.
             """)
-        parser.add_argument(
-            '--fg', help="""
-            Run ``git remote add -f ...`` at foreground after
-            ``git clone ...`` is finished.  Otherwise, these are done
-            at background in parallel.
-            """)
+        add_argument_fg(parser)
 
 
 class MergeApp(TaskRunnerApp):
@@ -41,9 +45,18 @@ class DeleteApp(TaskRunnerApp):
         parser.add_argument('branch')
 
 
+class SyncApp(TaskRunnerApp):
+
+    command = 'sync'
+
+    def add_arguments(self, parser):
+        parser.add_argument('workspaces', metavar='workspace', nargs='*')
+        add_argument_fg(parser)
+
+
 class VBApp(RootApp):
 
-    subappclasses = [InitializeApp, CheckoutApp, MergeApp, DeleteApp]
+    subappclasses = [InitializeApp, CheckoutApp, MergeApp, DeleteApp, SyncApp]
 
     def __init__(self):
         self.subapps = [c() for c in self.subappclasses]
