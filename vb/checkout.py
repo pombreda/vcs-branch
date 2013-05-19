@@ -43,7 +43,7 @@ class CheckoutTask(object):
         output = subprocess.check_output(['git', 'remote', '-v'])
         remotes = dict((l[0], l[1]) for l in parse_git_remote_v(output))
 
-        self.call_at_main(['git', 'clone', '.', self.branch])
+        self.call_at_main(['git', 'clone', '.', self.path])
         self.call_at_clone(['git', 'checkout', self.branch])
 
         self.call_at_clone(['git', 'remote', 'rename', 'origin', self.locmain])
