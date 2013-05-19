@@ -124,10 +124,10 @@ class CheckoutTask(object):
 
         self.call_at_clone(['git', 'remote', 'rename', 'origin', self.locmain])
 
-        rbranch = rmitem.rbranch
         try:
+            rbranch = rmitem.rbranch
             url = remotes.pop(rbranch)
-        except KeyError:
+        except (AttributeError, KeyError):
             pass
         else:
             self.call_at_clone(['git', 'remote', 'add', '-f', rbranch, url])
