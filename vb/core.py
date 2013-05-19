@@ -88,7 +88,7 @@ class TaskRunnerApp(BaseApplication):
 
     @property
     def taskclass(self):
-        return 'vb.{0}.task'.format(self.command)
+        return 'vb.tasks.{0}.task'.format(self.command)
 
     def get_taskclass(self):
         from .utils import import_item
