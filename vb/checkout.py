@@ -1,6 +1,7 @@
 import os
-import subprocess
 import collections
+
+from .task import Launchable, BaseTask
 
 
 def parse_git_remote_v(output):
@@ -24,7 +25,7 @@ def parse_git_remote_v(output):
         yield (remote, url, fop.strip('()'))
 
 
-class GitBranches(object):
+class GitBranches(Launchable):
 
     _Branch = collections.namedtuple(
         'Branch', ['mark', 'branch', 'rbranch', 'remote'])
@@ -40,7 +41,7 @@ class GitBranches(object):
                 return item
 
     def load(self):
-        output = subprocess.check_output(['git', 'branch', '-vv'])
+        output = self.check_output(['git', 'branch', '-vv'])
         self.parsed = list(self._Branch(*i) for i in self.parse(output))
         return self
 
@@ -82,21 +83,18 @@ class GitBranches(object):
         return self.remote(item) is not None
 
 
-class CheckoutTask(object):
+class CheckoutTask(BaseTask):
 
-    def __init__(self, branch, existing, locmain='locmain'):
-        self.branch = branch
-        self.existing = existing
-        self.path = os.path.join('.vb', branch)
-        self.locmain = locmain
+    @property
+    def path(self):
+        return os.path.join('.vb', self.branch)
 
     def check_init(self):
         if not os.path.isdir('.vb'):
             raise RuntimeError('Not initialized')
 
-    @staticmethod
-    def get_remotes():
-        output = subprocess.check_output(['git', 'remote', '-v'])
+    def get_remotes(self):
+        output = self.check_output(['git', 'remote', '-v'])
         return dict((l[0], l[1]) for l in parse_git_remote_v(output))
 
     @staticmethod
@@ -131,22 +129,22 @@ class CheckoutTask(object):
             pass
         else:
             self.call_at_clone(['git', 'remote', 'add', '-f', rbranch, url])
-            subprocess.call(['git', 'branch', '--set-upstream',
+            self.call(['git', 'branch', '--set-upstream',
                              self.branch, rmitem.rbranch],
                             cwd=self.path)
 
         with open(os.devnull, 'w') as devnull:
             outfile = devnull
             for (remote, url) in remotes.items():
-                subprocess.Popen(
+                self.Popen(
                     ['git', 'remote', 'add', '-f', remote, url],
-                    stdin=devnull, stdout=outfile, stderr=subprocess.PIPE)
+                    stdin=devnull, stdout=outfile, stderr=self.sp.PIPE)
 
     def call_at_main(self, *args, **kwds):
-        subprocess.check_call(*args, **kwds)
+        self.check_call(*args, **kwds)
 
     def call_at_clone(self, *args, **kwds):
-        subprocess.check_call(*args, cwd=self.path, **kwds)
+        self.check_call(*args, cwd=self.path, **kwds)
 
 
 task = CheckoutTask

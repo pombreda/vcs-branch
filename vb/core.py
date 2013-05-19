@@ -48,8 +48,8 @@ class RootApp(BaseApplication):
 
     def do_run(self, log_level, **kwds):
         level = getattr(logging, log_level.upper(), log_level)
-        logger = get_logger(level)
-        logger.setLevel()
+        logger = get_logger()
+        logger.setLevel(level)
         super(RootApp, self).do_run(**kwds)
 
 

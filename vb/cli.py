@@ -43,6 +43,7 @@ class VBApp(RootApp):
             subp.set_defaults(command=subapp.command)
             subapp.add_arguments(subp)
 
-    def do_run(self, command, **kwds):
+    def do_run(self, log_level, command, **kwds):
+        super(VBApp, self).do_run(log_level)
         self.current_app = self._command_app_map[command]
         self.current_app.do_run(**kwds)
