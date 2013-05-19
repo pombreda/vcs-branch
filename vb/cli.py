@@ -12,6 +12,10 @@ class CheckoutApp(TaskRunnerApp):
 
     def add_arguments(self, parser):
         parser.add_argument('branch')
+        parser.add_argument(
+            '--existing', '-e', action='store_true', help="""
+            Use existing BRANCH instead of creating the new one.
+            """)
 
 
 class MergeApp(TaskRunnerApp):

@@ -77,11 +77,15 @@ class GitBranches(object):
                         remote = rbranch.split('/', 1)[0]
             yield (mark, branch, rbranch, remote)
 
+    def __contains__(self, item):
+        return self.remote(item) is not None
+
 
 class CheckoutTask(object):
 
-    def __init__(self, branch, locmain='locmain'):
+    def __init__(self, branch, existing, locmain='locmain'):
         self.branch = branch
+        self.existing = existing
         self.path = os.path.join('.vb', branch)
         self.locmain = locmain
 
@@ -110,6 +114,12 @@ class CheckoutTask(object):
         branches = self.get_branches()
         rmitem = branches.remote(self.branch)
 
+        if self.existing:
+            if self.branch not in branches:
+                raise RuntimeError(
+                    "Branch '{0}' does not exist".format(self.branch))
+        else:
+            self.call_at_main(['git', 'branch', self.branch])
         self.call_at_main(['git', 'clone', '.', self.path])
         self.call_at_clone(['git', 'checkout', self.branch])
 
