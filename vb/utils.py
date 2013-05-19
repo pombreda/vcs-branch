@@ -10,7 +10,12 @@ def import_item(name):
     """
     Import and return `bar` given the string ``'foo.bar'``.
 
-    >>> import_item('os.path.join')
+    >>> import_item('os.path.join')                    # doctest: +ELLIPSIS
+    <function join at 0x...>
+    >>> import_item('datetime')                        # doctest: +ELLIPSIS
+    <module 'datetime' from '...'>
+
+    Copied from: IPython/utils/importstring.py
 
     """
     package = '.'.join(name.split('.')[0:-1])
