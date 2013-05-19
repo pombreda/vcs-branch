@@ -5,7 +5,7 @@ _unspecified = object()
 
 _logger = None
 LOG_LEVEL_NAMES = [
-    'CRITICAL', 'FATAL', 'ERROR', 'WARNING', 'WARN', 'INFO', 'DEBUG', 'NOTSET']
+    'FATAL', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'NOTSET']
 
 
 def get_logger():
