@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from .core import get_logger
@@ -31,3 +32,16 @@ class BaseTask(Launchable):
         self.locmain = locmain
         for (k, v) in kwds.items():
             setattr(self, k, v)
+
+    @property
+    def path(self):
+        # FIXME: defining `path` for all tasks is not good because
+        #        some task operate against multiple branches.
+        return os.path.join('.vb', self.branch)
+
+    def check_init(self):
+        if not os.path.isdir('.vb'):
+            raise RuntimeError('Not initialized')
+
+    def run(self):
+        self.check_init()

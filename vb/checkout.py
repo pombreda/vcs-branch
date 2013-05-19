@@ -85,14 +85,6 @@ class GitBranches(Launchable):
 
 class CheckoutTask(BaseTask):
 
-    @property
-    def path(self):
-        return os.path.join('.vb', self.branch)
-
-    def check_init(self):
-        if not os.path.isdir('.vb'):
-            raise RuntimeError('Not initialized')
-
     def get_remotes(self):
         output = self.check_output(['git', 'remote', '-v'])
         return dict((l[0], l[1]) for l in parse_git_remote_v(output))
@@ -102,7 +94,7 @@ class CheckoutTask(BaseTask):
         return GitBranches().load()
 
     def run(self):
-        self.check_init()
+        super(CheckoutTask, self).run()
         if os.path.isdir(self.path):
             print("{0} already exists".format(self.path))
             return

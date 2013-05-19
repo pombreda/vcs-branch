@@ -27,9 +27,17 @@ class MergeApp(TaskRunnerApp):
             'workspaces', metavar='workspace', nargs='+')
 
 
+class DeleteApp(TaskRunnerApp):
+
+    command = 'delete'
+
+    def add_arguments(self, parser):
+        parser.add_argument('branch')
+
+
 class VBApp(RootApp):
 
-    subappclasses = [InitializeApp, CheckoutApp, MergeApp]
+    subappclasses = [InitializeApp, CheckoutApp, MergeApp, DeleteApp]
 
     def __init__(self):
         self.subapps = [c() for c in self.subappclasses]
