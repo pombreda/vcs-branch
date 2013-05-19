@@ -4,7 +4,7 @@ import argparse
 class BaseApplication(object):
 
     def add_arguments(self, parser):
-        raise NotImplementedError
+        pass
 
     def get_parser(self):
         parser = argparse.ArgumentParser(
@@ -22,3 +22,23 @@ class BaseApplication(object):
 
     def do_run(self, **_):
         pass
+
+
+class TaskRunnerApp(BaseApplication):
+
+    @property
+    def command(self):
+        raise NotImplementedError
+
+    @property
+    def taskclass(self):
+        return 'vb.{0}.task'.format(self.command)
+
+    def get_taskclass(self):
+        from .utils import import_item
+        return import_item(self.taskclass)
+
+    def do_run(self, **kwds):
+        taskclass = self.get_taskclass()
+        self.task = taskclass(**kwds)
+        self.task.run()

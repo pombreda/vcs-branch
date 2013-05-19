@@ -1,20 +1,22 @@
-from .core import BaseApplication
+from .core import BaseApplication, TaskRunnerApp
 
 
-class CheckoutApp(BaseApplication):
+class InitializeApp(TaskRunnerApp):
+
+    command = 'init'
+
+
+class CheckoutApp(TaskRunnerApp):
 
     command = 'checkout'
 
     def add_arguments(self, parser):
         parser.add_argument('branch')
 
-    def do_run(self, branch):
-        pass
-
 
 class VBApp(BaseApplication):
 
-    subappclasses = [CheckoutApp]
+    subappclasses = [InitializeApp, CheckoutApp]
 
     def __init__(self):
         self.subapps = [c() for c in self.subappclasses]

@@ -59,3 +59,6 @@ class CheckoutTask(object):
 
     def call_at_clone(self, *args, **kwds):
         subprocess.check_call(*args, cwd=self.path, **kwds)
+
+
+task = CheckoutTask

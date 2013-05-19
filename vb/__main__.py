@@ -1,3 +1,3 @@
-from .cli import VBApp
+from vb.cli import VBApp
 app = VBApp()
 app.run()
