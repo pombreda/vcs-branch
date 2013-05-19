@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from .task import BaseTask
+from .base import BaseTask
 
 
 class DeleteTask(BaseTask):

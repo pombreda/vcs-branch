@@ -1,4 +1,4 @@
-from .task import MultiBranchTask
+from .base import MultiBranchTask
 
 
 class MergeTask(MultiBranchTask):

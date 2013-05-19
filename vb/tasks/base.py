@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from .core import get_logger
+from ..core import get_logger
 
 
 def wrap_popen(func, annotation=''):

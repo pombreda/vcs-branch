@@ -1,7 +1,7 @@
 import os
 import collections
 
-from .task import Launchable, BaseTask
+from .base import Launchable, BaseTask
 
 
 def parse_git_remote_v(output):

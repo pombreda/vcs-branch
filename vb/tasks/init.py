@@ -1,4 +1,4 @@
-from . import utils
+from .. import utils
 
 
 class InitializeTask(object):
