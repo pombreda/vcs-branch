@@ -27,10 +27,22 @@ class BaseApplication(object):
     def add_arguments(self, parser):
         pass
 
+    def get_description(self):
+        import textwrap
+        doc = self.__doc__
+        if doc:
+            return textwrap.dedent(doc)
+
+    def get_short_help(self):
+        for line in (self.__doc__ or '').splitlines():
+            line = line.strip()
+            if line:
+                return line
+
     def get_parser(self):
         parser = argparse.ArgumentParser(
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            description=self.__doc__)
+            description=self.get_description())
         self.add_arguments(parser)
         return parser
 
