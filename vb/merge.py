@@ -1,22 +1,23 @@
 import os
-import subprocess
+
+from .task import BaseTask
 
 
-class MergeTask(object):
+class MergeTask(BaseTask):
 
-    def __init__(self, workspaces, locmain='locmain'):
-        self.workspaces = workspaces
-        self.paths = [os.path.join('.vb', w) for w in workspaces]
-        self.locmain = locmain
+    @property
+    def paths(self):
+        return [os.path.join('.vb', w) for w in self.workspaces]
 
     def get_branch_names(self):
         return self.workspaces  # FIXME: relax WS=BRANCH restriction
 
     def run(self):
         for path in self.paths:
-            subprocess.check_call(['git', 'push', self.locmain], cwd=path)
+            self.check_call(['git', 'push', self.locmain], cwd=path)
 
         branches = self.get_branch_names()
-        subprocess.check_call(['git', 'merge'] + branches)
+        self.check_call(['git', 'merge'] + branches)
+
 
 task = MergeTask
