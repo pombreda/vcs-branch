@@ -3,11 +3,11 @@ import subprocess
 from .core import get_logger
 
 
-def wrap_popen(func):
-    def wrapper(self, command, *args, **kwds):
+def wrap_popen(func, annotation=''):
+    def wrapper(self, *args, **kwds):
         self.logger.debug(
-            'Calling {0}({1!r}, ...)'.format(func.__name__, command))
-        return func(command, *args, **kwds)
+            '{0}(*{1!r}, **{2!r})'.format(func.__name__, args, kwds))
+        return func(*args, **kwds)
     return wrapper
 
 
