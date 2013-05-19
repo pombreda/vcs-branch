@@ -13,10 +13,11 @@ class MergeTask(BaseTask):
         return self.workspaces  # FIXME: relax WS=BRANCH restriction
 
     def run(self):
-        for path in self.paths:
-            self.check_call(['git', 'push', self.locmain], cwd=path)
-
         branches = self.get_branch_names()
+
+        for (path, br) in zip(self.paths, branches):
+            self.check_call(['git', 'push', self.locmain, br], cwd=path)
+
         self.check_call(['git', 'merge'] + branches)
 
 
