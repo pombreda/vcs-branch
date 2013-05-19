@@ -45,3 +45,13 @@ class BaseTask(Launchable):
 
     def run(self):
         self.check_init()
+
+
+class MultiBranchTask(BaseTask):
+
+    @property
+    def paths(self):
+        return [os.path.join('.vb', w) for w in self.workspaces]
+
+    def get_branch_names(self):
+        return self.workspaces  # FIXME: relax WS=BRANCH restriction
