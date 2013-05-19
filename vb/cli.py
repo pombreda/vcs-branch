@@ -1,15 +1,6 @@
 from .core import RootApp, TaskRunnerApp
 
 
-def add_argument_fg(parser):
-    parser.add_argument(
-        '--fg', action='store_true', help="""
-        Run ``git remote add -f ...`` at foreground after
-        ``git clone ...`` is finished.  Otherwise, these are done
-        at background in parallel.
-        """)
-
-
 class InitializeApp(TaskRunnerApp):
 
     command = 'init'
@@ -25,7 +16,12 @@ class CheckoutApp(TaskRunnerApp):
             '--existing', '-e', action='store_true', help="""
             Use existing BRANCH instead of creating the new one.
             """)
-        add_argument_fg(parser)
+        parser.add_argument(
+            '--fg', action='store_true', help="""
+            Run ``git remote add -f ...`` at foreground after
+            ``git clone ...`` is finished.  Otherwise, these are done
+            at background in parallel.
+            """)
 
 
 class MergeApp(TaskRunnerApp):
@@ -51,7 +47,11 @@ class SyncApp(TaskRunnerApp):
 
     def add_arguments(self, parser):
         parser.add_argument('workspaces', metavar='workspace', nargs='*')
-        add_argument_fg(parser)
+        parser.add_argument(
+            '--fg', action='store_true', help="""
+            Run ``git relink ...`` at foreground after ``git fetch LOCMAIN``
+            is finished.  Otherwise, these are done at background in parallel.
+            """)
 
 
 class VBApp(RootApp):
