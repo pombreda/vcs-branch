@@ -1,4 +1,4 @@
-from .core import BaseApplication, TaskRunnerApp
+from .core import RootApp, TaskRunnerApp
 
 
 class InitializeApp(TaskRunnerApp):
@@ -27,7 +27,7 @@ class MergeApp(TaskRunnerApp):
             'workspaces', metavar='workspace', nargs='+')
 
 
-class VBApp(BaseApplication):
+class VBApp(RootApp):
 
     subappclasses = [InitializeApp, CheckoutApp, MergeApp]
 
@@ -36,6 +36,7 @@ class VBApp(BaseApplication):
         self._command_app_map = dict((c.command, c) for c in self.subapps)
 
     def add_arguments(self, parser):
+        super(VBApp, self).add_arguments(parser)
         subparsers = parser.add_subparsers()
         for subapp in self.subapps:
             subp = subparsers.add_parser(subapp.command)

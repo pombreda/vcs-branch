@@ -1,4 +1,20 @@
+import logging
 import argparse
+
+_logger = None
+LOG_LEVEL_NAMES = [
+    'CRITICAL', 'FATAL', 'ERROR', 'WARNING', 'WARN', 'INFO', 'DEBUG', 'NOTSET']
+
+
+def get_logger():
+    global _logger
+    if _logger is None:
+        hndlr = logging.StreamHandler()
+        hndlr.setLevel(0)
+
+        _logger = logging.getLogger('vb')
+        _logger.addHandler(hndlr)
+    return _logger
 
 
 class BaseApplication(object):
@@ -22,6 +38,19 @@ class BaseApplication(object):
 
     def do_run(self, **_):
         pass
+
+
+class RootApp(BaseApplication):
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--log-level', default='INFO', choices=LOG_LEVEL_NAMES)
+
+    def do_run(self, log_level, **kwds):
+        level = getattr(logging, log_level.upper(), log_level)
+        logger = get_logger(level)
+        logger.setLevel()
+        super(RootApp, self).do_run(**kwds)
 
 
 class TaskRunnerApp(BaseApplication):
