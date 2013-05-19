@@ -52,7 +52,7 @@ class GitBranches(Launchable):
 
         >>> list(GitBranches.parse('''\
         ... * B1  d7cab8a [r1/b1] commit message
-        ...   B2  17b657c [r2/b2] commit message
+        ...   B2  17b657c [r2/b2: ahead 1] commit message
         ...   B3  203ff99 [r3/b3] commit message
         ... '''))                           #doctest: +NORMALIZE_WHITESPACE
         [('*', 'B1', 'r1/b1', 'r1'),
@@ -67,14 +67,13 @@ class GitBranches(Launchable):
             else:
                 mark = ''
             line = line.lstrip()
-            str.split
             words = line.split(None, 4)
             (branch, sha) = words[:2]
             rbranch = remote = ''
             if len(words) > 2:
                 w2 = words[2]
-                if w2[0] == '[' and w2[-1] == ']':
-                    rbranch = w2[1:-1]
+                if w2[0] == '[':
+                    rbranch = w2[1:].rstrip(':]')
                     if '/' in rbranch:
                         remote = rbranch.split('/', 1)[0]
             yield (mark, branch, rbranch, remote)
