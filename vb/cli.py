@@ -63,7 +63,11 @@ class SyncApp(TaskRunnerApp):
     Synchronize git DB in root and branches.
 
     1. Run ``git fetch LOCMAIN`` in specified BRANCHes
-    2. Run ``git relink`` to save disk consumption
+    2. Run ``git push LOCMAIN BRANCH`` [#]_
+    3. Run ``git relink`` to save disk consumption
+
+    .. [#]  If currently checked out branch at LOCMAIN is BRANCH, then
+            ``git pull --ff`` is used instead.
 
     """
 

@@ -32,7 +32,7 @@ class GitBranches(Launchable):
 
     def current(self):
         for item in self.parsed:
-            if item == '*':
+            if item.mark == '*':
                 return item
 
     def remote(self, branch):
