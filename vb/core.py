@@ -172,9 +172,13 @@ class Launchable(object):
         if show_failed_stdout and proc.returncode:
             level = logging.WARN
         self.logger.debug('code = %s', proc.returncode)
-        self.logger.log(level, """Failed: %s
+        self.logger.log(level,
+                        """%s: %s
 stdout:
-%s""", utils.quote_command(command), stdout)
+%s""",
+                        ('Failed' if proc.returncode else 'Ran'),
+                        utils.quote_command(command),
+                        stdout)
         return (proc, stdout)
 
     @_wrap_call
