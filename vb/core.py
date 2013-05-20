@@ -151,10 +151,15 @@ class Launchable(object):
                 **kwds)
 
     def _wrap_call(func):
-        def wrapper(self, *args, **kwds):
-            self.logger.debug('{0}(*{1!r}, **{2!r})'.format(name, args, kwds))
-            return func(self, *args, **kwds)
-        name = func.__name__
+        def wrapper(self, command, *args, **kwds):
+            log = self.logger.debug
+            log('Command executed via %s:', func.__name__)
+            log(utils.quote_command(command))
+            for a in args:
+                log('- %r', a)
+            for (k, v) in kwds.items():
+                log('- %s: %r', k, v)
+            return func(self, command, *args, **kwds)
         return wrapper
 
     def _call(self, command, *args, **kwds):
