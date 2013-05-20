@@ -32,7 +32,7 @@ class SyncTask(MultiBranchTask):
         runner(['git', 'relink'] + self.paths + ['.'])
 
         if self.failures != 0:
-            self.exit('{0} failures during sync'.format(self.failures))
+            self.fail('{0} failures during sync'.format(self.failures))
 
     def call_with_fail_count(self, msgfmt, *args, **kwds):
         returncode = self.call(*args, **kwds)

@@ -1,4 +1,5 @@
 import os
+import sys
 
 from ..core import Launchable
 from ..vcs import parse_git_remote_v, GitBranches
@@ -26,8 +27,9 @@ class BaseTask(Launchable):
     def run(self):
         self.check_init()
 
-    def exit(self, message=None):
-        raise RuntimeError(message) if message else RuntimeError
+    def fail(self, message=None):
+        print(message)
+        sys.exit(1)
 
     def get_all_workspaces(self):
         return [w for w in os.listdir('.vb') if w != '.var']
