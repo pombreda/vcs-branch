@@ -1,3 +1,4 @@
+import os
 import logging
 import argparse
 
@@ -9,16 +10,6 @@ LOG_LEVEL_NAMES = [
 
 
 def get_logger():
-    global _logger
-    if _logger is None:
-        hndlr = logging.StreamHandler()
-        hndlr.setLevel(0)
-
-        formatter = logging.Formatter("%(levelname)s %(message)s")
-        hndlr.setFormatter(formatter)
-
-        _logger = logging.getLogger('vb')
-        _logger.addHandler(hndlr)
     return _logger
 
 
@@ -51,10 +42,16 @@ class BaseApplication(object):
         return vars(parser.parse_args(args))
 
     def run(self):
-        self.do_run(**self.parse_args())
+        try:
+            self.do_run(**self.parse_args())
+        finally:
+            self.after_run()
 
     def do_run(self, **kwds):
         return kwds
+
+    def after_run(self):
+        pass
 
 
 class RootApp(BaseApplication):
@@ -69,15 +66,48 @@ class RootApp(BaseApplication):
             Alias for --log-level.  -v: INFO; -vv: DEBUG; -vvv: NOTSET
             """)
 
+    logfilehandler = None
+    logfile = None
+
+    def set_logger(self):
+        self.logger = logging.getLogger('vb')
+        self.logger.setLevel(logging.NOTSET)
+        self.set_log_stderr_handler()
+        self.set_log_file_handler()
+
+        global _logger
+        _logger = self.logger
+
+    def set_log_stderr_handler(self):
+        self.logstderrhandler = hndlr = logging.StreamHandler()
+        hndlr.setLevel(0)
+        formatter = logging.Formatter("%(levelname)s %(message)s")
+        hndlr.setFormatter(formatter)
+        self.logger.addHandler(hndlr)
+
+    def set_log_file_handler(self):
+        vardir = os.path.join('.vb', '.var')
+        if os.path.isdir(vardir):
+            self.logfile = open(os.path.join(vardir, 'app.log'), 'w')
+            formatter = logging.Formatter(logging.BASIC_FORMAT)
+            self.logfilehandler = logging.StreamHandler(self.logfile)
+            self.logfilehandler.setLevel(0)
+            self.logfilehandler.setFormatter(formatter)
+            self.logger.addHandler(self.logfilehandler)
+
     def do_run(self, log_level, verbose, **kwds):
         if log_level is _unspecified:
             if verbose:
                 log_level = {1: 'INFO', 2: 'DEBUG'}.get(verbose, 0)
             else:
                 log_level = 'WARN'
-        logger = get_logger()
-        logger.setLevel(log_level)
+        self.set_logger()
+        self.logstderrhandler.setLevel(log_level)
         return super(RootApp, self).do_run(**kwds)
+
+    def after_run(self):
+        if self.logfile:
+            self.logfile.close()
 
 
 class TaskRunnerApp(BaseApplication):
