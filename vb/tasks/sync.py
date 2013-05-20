@@ -19,7 +19,8 @@ class SyncTask(MultiBranchTask):
         current = branches.current()
 
         for (path, br) in zip(self.paths, self.get_branch_names()):
-            self.check_call(['git', 'fetch', self.locmain], cwd=path)
+            self.call(['git', 'pull', '--ff', self.locmain, br], cwd=path)
+            # FIXME: warn when git pull failed.
             if current.branch == br:
                 self.call(['git', 'pull', '--ff', path, br])
                 # FIXME: warn when git pull failed.
