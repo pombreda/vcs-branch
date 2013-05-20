@@ -3,6 +3,8 @@ import logging
 import argparse
 import subprocess
 
+from . import utils
+
 _unspecified = object()
 
 LOG_LEVEL_NAMES = [
@@ -155,15 +157,19 @@ class Launchable(object):
         name = func.__name__
         return wrapper
 
-    def _call(self, *args, **kwds):
+    def _call(self, command, *args, **kwds):
         show_failed_stdout = kwds.pop('show_failed_stdout', False)
         proc = self._Popen(
-            *args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **kwds)
+            command, *args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            **kwds)
         (stdout, _) = proc.communicate()
         level = logging.DEBUG
         if show_failed_stdout and proc.returncode:
             level = logging.WARN
-        self.logger.log(level, 'STDOUT\n%s', stdout)
+        self.logger.debug('code = %s', proc.returncode)
+        self.logger.log(level, """Failed: %s
+stdout:
+%s""", utils.quote_command(command), stdout)
         return (proc, stdout)
 
     @_wrap_call

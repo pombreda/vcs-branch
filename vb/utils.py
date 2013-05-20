@@ -6,6 +6,19 @@ def make_dir_if_not_exist(path):
         os.makedirs(path)
 
 
+def quote_command(command):
+    """
+    Quote command
+
+    >>> quote_command(['cat', 'file name with space.txt'])
+    "cat 'file name with space.txt'"
+
+    :type command: [str]
+
+    """
+    return ' '.join(repr(c) if ' ' in c else c for c in command)
+
+
 def import_item(name):
     """
     Import and return `bar` given the string ``'foo.bar'``.
