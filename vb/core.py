@@ -137,10 +137,9 @@ class Launchable(object):
         self.logger = logger
 
     sp = subprocess
+    _Popen = subprocess.Popen
     Popen = wrap_popen(subprocess.Popen)
-    check_call = wrap_popen(subprocess.check_call)
     check_output = wrap_popen(subprocess.check_output)
-    call = wrap_popen(subprocess.call)
 
     def call_bg(self, *args, **kwds):
         with open(os.devnull, 'w') as devnull:
@@ -148,3 +147,27 @@ class Launchable(object):
             return self.Popen(
                 *args, stdin=devnull, stdout=outfile, stderr=self.sp.PIPE,
                 **kwds)
+
+    def _wrap_call(func):
+        def wrapper(self, *args, **kwds):
+            self.logger.debug('{0}(*{1!r}, **{2!r})'.format(name, args, kwds))
+            return func(self, *args, **kwds)
+        name = func.__name__
+        return wrapper
+
+    def _call(self, *args, **kwds):
+        proc = self._Popen(
+            *args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **kwds)
+        (stdout, _) = proc.communicate()
+        self.logger.debug('STDOUT\n%s', stdout)
+        return (proc, stdout)
+
+    @_wrap_call
+    def call(self, *args, **kwds):
+        return self._call(*args, **kwds)[0].returncode
+
+    @_wrap_call
+    def check_call(self, cmd, *args, **kwds):
+        (proc, stdout) = self._call(cmd, *args, **kwds)
+        if proc.returncode != 0:
+            raise subprocess.CalledProcessError(proc.returncode, cmd, stdout)
