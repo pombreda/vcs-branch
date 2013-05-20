@@ -10,8 +10,8 @@ class SyncTask(MultiBranchTask):
                 self.logger.warn('No workspace exists.')
                 return
             self.logger.info(
-                'No workspace is specified.  Running for all\n%s',
-                self.workspaces)
+                'No workspace is specified.  Running for all %s workspace(s)',
+                len(self.workspaces))
         branches = self.get_branches()
         current = branches.current()
 
@@ -33,7 +33,7 @@ class SyncTask(MultiBranchTask):
         runner(['git', 'relink'] + self.paths + ['.'])
 
         if self.failures != 0:
-            self.fail('{0} failures during sync'.format(self.failures))
+            self.fail('{0} failure(s) during sync'.format(self.failures))
 
     def call_with_fail_count(self, msgfmt, *args, **kwds):
         returncode = self.call(*args, show_failed_stdout=True, **kwds)
