@@ -35,7 +35,7 @@ class SyncTask(MultiBranchTask):
             self.fail('{0} failures during sync'.format(self.failures))
 
     def call_with_fail_count(self, msgfmt, *args, **kwds):
-        returncode = self.call(*args, **kwds)
+        returncode = self.call(*args, show_failed_stdout=True, **kwds)
         if returncode != 0:
             self.logger.warn(msgfmt.format(code=returncode))
             self.failures += 1

@@ -156,10 +156,14 @@ class Launchable(object):
         return wrapper
 
     def _call(self, *args, **kwds):
+        show_failed_stdout = kwds.pop('show_failed_stdout', False)
         proc = self._Popen(
             *args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **kwds)
         (stdout, _) = proc.communicate()
-        self.logger.debug('STDOUT\n%s', stdout)
+        level = logging.DEBUG
+        if show_failed_stdout and proc.returncode:
+            level = logging.WARN
+        self.logger.log(level, 'STDOUT\n%s', stdout)
         return (proc, stdout)
 
     @_wrap_call
