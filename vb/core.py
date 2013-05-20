@@ -1,16 +1,12 @@
 import os
 import logging
 import argparse
+import subprocess
 
 _unspecified = object()
 
-_logger = None
 LOG_LEVEL_NAMES = [
     'FATAL', 'ERROR', 'WARN', 'INFO', 'DEBUG', 'NOTSET']
-
-
-def get_logger():
-    return _logger
 
 
 class BaseApplication(object):
@@ -75,9 +71,6 @@ class RootApp(BaseApplication):
         self.set_log_stderr_handler()
         self.set_log_file_handler()
 
-        global _logger
-        _logger = self.logger
-
     def set_log_stderr_handler(self):
         self.logstderrhandler = hndlr = logging.StreamHandler()
         hndlr.setLevel(0)
@@ -124,7 +117,34 @@ class TaskRunnerApp(BaseApplication):
         from .utils import import_item
         return import_item(self.taskclass)
 
-    def do_run(self, **kwds):
+    def do_run(self, logger, **kwds):
         taskclass = self.get_taskclass()
-        self.task = taskclass(**kwds)
+        self.task = taskclass(logger, **kwds)
         self.task.run()
+
+
+def wrap_popen(func, annotation=''):
+    def wrapper(self, *args, **kwds):
+        self.logger.debug(
+            '{0}(*{1!r}, **{2!r})'.format(func.__name__, args, kwds))
+        return func(*args, **kwds)
+    return wrapper
+
+
+class Launchable(object):
+
+    def __init__(self, logger):
+        self.logger = logger
+
+    sp = subprocess
+    Popen = wrap_popen(subprocess.Popen)
+    check_call = wrap_popen(subprocess.check_call)
+    check_output = wrap_popen(subprocess.check_output)
+    call = wrap_popen(subprocess.call)
+
+    def call_bg(self, *args, **kwds):
+        with open(os.devnull, 'w') as devnull:
+            outfile = devnull
+            return self.Popen(
+                *args, stdin=devnull, stdout=outfile, stderr=self.sp.PIPE,
+                **kwds)

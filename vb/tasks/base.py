@@ -1,40 +1,13 @@
 import os
-import subprocess
 
-from ..core import get_logger
-
-
-def wrap_popen(func, annotation=''):
-    def wrapper(self, *args, **kwds):
-        self.logger.debug(
-            '{0}(*{1!r}, **{2!r})'.format(func.__name__, args, kwds))
-        return func(*args, **kwds)
-    return wrapper
-
-
-class Launchable(object):
-
-    def __init__(self):
-        self.logger = get_logger()
-
-    sp = subprocess
-    Popen = wrap_popen(subprocess.Popen)
-    check_call = wrap_popen(subprocess.check_call)
-    check_output = wrap_popen(subprocess.check_output)
-    call = wrap_popen(subprocess.call)
-
-    def call_bg(self, *args, **kwds):
-        with open(os.devnull, 'w') as devnull:
-            outfile = devnull
-            return self.Popen(
-                *args, stdin=devnull, stdout=outfile, stderr=self.sp.PIPE,
-                **kwds)
+from ..core import Launchable
+from ..vcs import parse_git_remote_v, GitBranches
 
 
 class BaseTask(Launchable):
 
-    def __init__(self, locmain='locmain', **kwds):
-        super(BaseTask, self).__init__()
+    def __init__(self, logger, locmain='locmain', **kwds):
+        super(BaseTask, self).__init__(logger)
 
         self.locmain = locmain
         for (k, v) in kwds.items():
@@ -55,6 +28,16 @@ class BaseTask(Launchable):
 
     def exit(self, message=None):
         raise RuntimeError(message) if message else RuntimeError
+
+    def get_all_workspaces(self):
+        return [w for w in os.listdir('.vb') if w != '.var']
+
+    def get_remotes(self):
+        output = self.check_output(['git', 'remote', '-v'])
+        return dict((l[0], l[1]) for l in parse_git_remote_v(output))
+
+    def get_branches(self):
+        return GitBranches(self.logger).load()
 
 
 class MultiBranchTask(BaseTask):

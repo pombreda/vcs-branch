@@ -1,21 +1,18 @@
-import os
-
 from .base import MultiBranchTask
-from .checkout import GitBranches
 
 
 class SyncTask(MultiBranchTask):
 
     def run(self):
         if not self.workspaces:
-            self.workspaces = os.listdir('.vb')
+            self.workspaces = self.get_all_workspaces()
             if not self.workspaces:
                 self.logger.warn('No workspace exists.')
                 return
             self.logger.info(
                 'No workspace is specified.  Running for all\n%s',
                 self.workspaces)
-        branches = GitBranches().load()
+        branches = self.get_branches()
         current = branches.current()
 
         self.failures = 0

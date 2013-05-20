@@ -106,4 +106,4 @@ class VBApp(RootApp):
     def do_run(self, command, **kwds):
         kwds = super(VBApp, self).do_run(**kwds)
         self.current_app = self._command_app_map[command]
-        return self.current_app.do_run(**kwds)
+        return self.current_app.do_run(self.logger, **kwds)
