@@ -42,20 +42,23 @@ class SyncTask(MultiBranchTask):
         return returncode
 
     def pull_from_locmain(self, branch):
+        base = ['git', 'pull', '--ff-only']
         return self.call_with_fail_count(
             'Pulling locmain to {0} failed with code {{code}}'.format(branch),
-            ['git', 'pull', '--ff-only', self.locmain, branch],
+            base + [self.locmain, branch],
             cwd=self.ws_to_path(branch))
 
     def pull_from_branch(self, branch):
+        base = ['git', 'pull', '--ff-only']
         return self.call_with_fail_count(
             'Pulling {0} to locmain failed with code {{code}}'.format(branch),
-            ['git', 'pull', '--ff-only', self.ws_to_path(branch), branch])
+            base + [self.ws_to_path(branch), branch])
 
     def push_to_locmain(self, branch):
+        base = ['git', 'push']
         return self.call_with_fail_count(
             'Pushing {0} to locmain failed with code {{code}}'.format(branch),
-            ['git', 'push', self.locmain, branch],
+            base + [self.locmain, branch],
             cwd=self.ws_to_path(branch))
 
 
