@@ -18,15 +18,16 @@ class SyncTask(MultiBranchTask):
         self.failures = 0
         for br in self.get_branch_names():
 
-            self.logger.info('Sync: locmain -> {0}'.format(br))
-            if self.pull_from_locmain(br) != 0:
-                continue
-
             self.logger.info('Sync: {0} -> locmain'.format(br))
             if current.branch == br:
-                self.pull_from_branch(br)
+                to_locmain = self.pull_from_branch
             else:
-                self.push_to_locmain(br)
+                to_locmain = self.push_to_locmain
+            if to_locmain(br) != 0:
+                continue
+
+            self.logger.info('Sync: locmain -> {0}'.format(br))
+            self.pull_from_locmain(br)
 
         runner = self.check_call if self.fg else self.call_bg
         runner(['git', 'relink'] + self.paths + ['.'])
@@ -56,6 +57,9 @@ class SyncTask(MultiBranchTask):
 
     def push_to_locmain(self, branch):
         base = ['git', 'push']
+        if self.force:
+            self.logger.info('Using --force for pushing from %s', branch)
+            base += ['--force']
         return self.call_with_fail_count(
             'Pushing {0} to locmain failed with code {{code}}'.format(branch),
             base + [self.locmain, branch],

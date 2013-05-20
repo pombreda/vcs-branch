@@ -80,6 +80,11 @@ class SyncApp(TaskRunnerApp):
             Run ``git relink ...`` at foreground after ``git fetch LOCMAIN``
             is finished.  Otherwise, these are done at background in parallel.
             """)
+        parser.add_argument(
+            '--force', '-f', action='store_true', help="""
+            Do force push for `.vb/BRANCH`-to-`LOCMAIN` synchronization.
+            When this option is specified, branch in LOCMAIN is discarded.
+            """)
 
 
 class VBApp(RootApp):
