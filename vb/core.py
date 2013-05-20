@@ -125,23 +125,12 @@ class TaskRunnerApp(BaseApplication):
         self.task.run()
 
 
-def wrap_popen(func, annotation=''):
-    def wrapper(self, *args, **kwds):
-        self.logger.debug(
-            '{0}(*{1!r}, **{2!r})'.format(func.__name__, args, kwds))
-        return func(*args, **kwds)
-    return wrapper
-
-
 class Launchable(object):
 
     def __init__(self, logger):
         self.logger = logger
 
     sp = subprocess
-    _Popen = subprocess.Popen
-    Popen = wrap_popen(subprocess.Popen)
-    check_output = wrap_popen(subprocess.check_output)
 
     def call_bg(self, *args, **kwds):
         with open(os.devnull, 'w') as devnull:
@@ -162,9 +151,17 @@ class Launchable(object):
             return func(self, command, *args, **kwds)
         return wrapper
 
+    @_wrap_call
+    def check_output(self, *args, **kwds):
+        return self.sp.check_output(*args, **kwds)
+
+    @_wrap_call
+    def Popen(self, *args, **kwds):
+        return self.sp.Popen(*args, **kwds)
+
     def _call(self, command, *args, **kwds):
         show_failed_stdout = kwds.pop('show_failed_stdout', False)
-        proc = self._Popen(
+        proc = self.sp.Popen(
             command, *args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             **kwds)
         (stdout, _) = proc.communicate()
