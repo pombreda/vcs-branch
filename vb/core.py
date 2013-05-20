@@ -67,7 +67,7 @@ class RootApp(BaseApplication):
 
     def set_logger(self):
         self.logger = logging.getLogger('vb')
-        self.logger.setLevel(logging.NOTSET)
+        self.logger.setLevel(logging.DEBUG)
         self.set_log_stderr_handler()
         self.set_log_file_handler()
 
@@ -84,7 +84,7 @@ class RootApp(BaseApplication):
             self.logfile = open(os.path.join(vardir, 'app.log'), 'w')
             formatter = logging.Formatter(logging.BASIC_FORMAT)
             self.logfilehandler = logging.StreamHandler(self.logfile)
-            self.logfilehandler.setLevel(0)
+            self.logfilehandler.setLevel(logging.DEBUG)
             self.logfilehandler.setFormatter(formatter)
             self.logger.addHandler(self.logfilehandler)
 
