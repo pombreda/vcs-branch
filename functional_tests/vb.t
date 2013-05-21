@@ -25,3 +25,24 @@ Checkout
   $ vb checkout branch-a
   $ ls .vb
   branch-a
+  $ vb checkout branch-b
+  $ ls .vb
+  branch-a
+  branch-b
+
+
+Merge
+
+  $ vb merge branch-a branch-b
+
+
+Delete
+
+  $ vb delete branch-a
+  $ ls .vb
+  branch-b
+
+
+Sync
+
+  $ vb sync
