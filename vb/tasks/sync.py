@@ -18,6 +18,11 @@ class SyncTask(MultiBranchTask):
         self.failures = 0
         for br in self.get_branch_names():
 
+            if current.branch != br:
+                self.logger.info(
+                    'Sync ({0}): locmain -> {1}'.format(current.branch, br))
+                self.fetch_from_locmain(current.branch, br)
+
             self.logger.info('Sync: {0} -> locmain'.format(br))
             if current.branch == br:
                 to_locmain = self.pull_from_branch
@@ -42,12 +47,16 @@ class SyncTask(MultiBranchTask):
             self.failures += 1
         return returncode
 
-    def pull_from_locmain(self, branch):
-        base = ['git', 'pull', '--ff-only']
+    def fetch_from_locmain(self, branch, ws=None):
+        return self.pull_from_locmain(branch, ws, ['fetch'], 'Fetching')
+
+    def pull_from_locmain(self, branch, ws=None, cmd=['pull', '--ff-only'],
+                          act='Pulling'):
+        base = ['git'] + cmd
         return self.call_with_fail_count(
-            'Pulling locmain to {0} failed with code {{code}}'.format(branch),
+            '{0} locmain to {1} failed with code {{code}}'.format(act, branch),
             base + [self.locmain, branch],
-            cwd=self.ws_to_path(branch))
+            cwd=self.ws_to_path(branch if ws is None else ws))
 
     def pull_from_branch(self, branch):
         base = ['git', 'pull', '--ff-only']
