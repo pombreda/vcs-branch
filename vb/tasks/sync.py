@@ -53,11 +53,13 @@ class SyncTask(MultiBranchTask):
         return '{{act}} {0} to {1} failed with code {{code}}'.format(frm, to)
 
     def fetch_from_locmain(self, branch, ws=None):
-        return self.pull_from_locmain(branch, ws, ['fetch'])
+        refspec = '+{0}:refs/remotes/{1}/{0}'.format(branch, self.locmain)
+        return self.pull_from_locmain(branch, refspec, ws, ['fetch'])
 
-    def pull_from_locmain(self, branch, ws=None, cmd=['pull', '--ff-only']):
+    def pull_from_locmain(self, branch, refspec=None, ws=None,
+                          cmd=['pull', '--ff-only']):
         msgfmt = self._msgfmt('locmain', branch)
-        command = ['git'] + cmd + [self.locmain, branch]
+        command = ['git'] + cmd + [self.locmain, refspec or branch]
         cwd = self.ws_to_path(branch if ws is None else ws)
         return self.call_with_fail_count(msgfmt, command, cwd=cwd)
 
