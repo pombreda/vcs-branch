@@ -3,5 +3,9 @@ language: python
 before_install:
   - pip install --quiet --use-mirrors tox
 
+  # This is for TOXENV=cram (functional test)
+  - git config --global user.name "Test User"
+  - git config --global user.email test@mail.com
+
 script:
   - tox
