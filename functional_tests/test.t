@@ -1,12 +1,6 @@
-Test that test environment is setup as expected.
-
-  $ git config user.name
-  Test
-  $ git config user.email
-  test@mail.com
-
-
-This user setting must be used when committing etc.
+Git does not let you to commit unless user.name and user.email are set.
+Let's check that they are correctly set and commit works.  These values are
+set in ``../tox.ini`` using ``$GIT_AUTHOR_NAME`` and ``$GIT_AUTHOR_EMAIL``.
 
   $ git init
   Initialized empty Git repository in * (glob)
