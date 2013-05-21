@@ -117,4 +117,3 @@ class VBApp(RootApp):
 def main():
     app = VBApp()
     app.run()
-    return app
