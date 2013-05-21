@@ -40,39 +40,42 @@ class SyncTask(MultiBranchTask):
         if self.failures != 0:
             self.fail('{0} failure(s) during sync'.format(self.failures))
 
-    def call_with_fail_count(self, msgfmt, *args, **kwds):
-        returncode = self.call(*args, show_failed_stdout=True, **kwds)
+    def call_with_fail_count(self, msgfmt, command, *args, **kwds):
+        act = '{0}ing'.format(command[0].title())  # Pulling/Pushing/Fetching
+        returncode = self.call(command, *args, show_failed_stdout=True, **kwds)
         if returncode != 0:
-            self.logger.warn(msgfmt.format(code=returncode))
+            self.logger.warn(msgfmt.format(act=act, code=returncode))
             self.failures += 1
         return returncode
 
-    def fetch_from_locmain(self, branch, ws=None):
-        return self.pull_from_locmain(branch, ws, ['fetch'], 'Fetching')
+    @staticmethod
+    def _msgfmt(frm, to):
+        return '{{act}} {0} to {1} failed with code {{code}}'.format(frm, to)
 
-    def pull_from_locmain(self, branch, ws=None, cmd=['pull', '--ff-only'],
-                          act='Pulling'):
-        base = ['git'] + cmd
-        return self.call_with_fail_count(
-            '{0} locmain to {1} failed with code {{code}}'.format(act, branch),
-            base + [self.locmain, branch],
-            cwd=self.ws_to_path(branch if ws is None else ws))
+    def fetch_from_locmain(self, branch, ws=None):
+        return self.pull_from_locmain(branch, ws, ['fetch'])
+
+    def pull_from_locmain(self, branch, ws=None, cmd=['pull', '--ff-only']):
+        msgfmt = self._msgfmt('locmain', branch)
+        command = ['git'] + cmd + [self.locmain, branch]
+        cwd = self.ws_to_path(branch if ws is None else ws)
+        return self.call_with_fail_count(msgfmt, command, cwd=cwd)
 
     def pull_from_branch(self, branch):
-        base = ['git', 'pull', '--ff-only']
-        return self.call_with_fail_count(
-            'Pulling {0} to locmain failed with code {{code}}'.format(branch),
-            base + [self.ws_to_path(branch), branch])
+        msgfmt = self._msgfmt(branch, 'locmain')
+        command = ['git', 'pull', '--ff-only', self.ws_to_path(branch), branch]
+        return self.call_with_fail_count(msgfmt, command)
 
     def push_to_locmain(self, branch):
-        base = ['git', 'push']
         if self.force:
             self.logger.info('Using --force for pushing from %s', branch)
-            base += ['--force']
-        return self.call_with_fail_count(
-            'Pushing {0} to locmain failed with code {{code}}'.format(branch),
-            base + [self.locmain, branch],
-            cwd=self.ws_to_path(branch))
+            force = ['--force']
+        else:
+            force = []
+        msgfmt = self._msgfmt(branch, 'locmain')
+        command = ['git', 'push'] + force + [self.locmain, branch]
+        cwd = self.ws_to_path(branch)
+        return self.call_with_fail_count(msgfmt, command, cwd=cwd)
 
 
 task = SyncTask
