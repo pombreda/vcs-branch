@@ -21,6 +21,10 @@ class CheckoutApp(TaskRunnerApp):
     def add_arguments(self, parser):
         parser.add_argument('branch')
         parser.add_argument(
+            '--based-on', metavar='start-point', help="""
+            Create branch at this point.  Use HEAD instead if not given.
+            """)
+        parser.add_argument(
             '--existing', '-e', action='store_true', help="""
             Use existing BRANCH instead of creating the new one.
             """)
