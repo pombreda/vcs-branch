@@ -17,4 +17,7 @@ setup(
         "Development Status :: 3 - Alpha",
         # see: http://pypi.python.org/pypi?%3Aaction=list_classifiers
     ],
+    entry_points={
+        'console_scripts': ['vb = vb.cli:main'],
+    },
 )

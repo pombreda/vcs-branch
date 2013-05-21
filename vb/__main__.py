@@ -1,3 +1,2 @@
-from vb.cli import VBApp
-app = VBApp()
-app.run()
+from vb.cli import main
+app = main()
