@@ -28,7 +28,7 @@ But it can be specified::
 
   $ echo 'edit' > README.txt
   $ git commit --all --message 'Second commit' > /dev/null
-  $ vb checkout branch-b --based-on branch-a
+  $ vb checkout branch-b branch-a
   $ git branch
     branch-a
     branch-b

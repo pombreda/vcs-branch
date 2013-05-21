@@ -19,7 +19,7 @@ class CheckoutTask(BaseTask):
             if self.branch not in branches:
                 self.fail("Branch '{0}' does not exist".format(self.branch))
         else:
-            start_point = [self.based_on] if self.based_on else []
+            start_point = [self.start_point] if self.start_point else []
             self.call_at_main(['git', 'branch', self.branch] + start_point)
         self.call_at_main(['git', 'clone', '.', self.path])
         self.call_at_clone(['git', 'checkout', self.branch])
