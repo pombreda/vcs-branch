@@ -1,3 +1,8 @@
+==========
+ Overview
+==========
+::
+
   $ vb
   usage: vb \[-h\] \[--log-level .*\] \[--verbose\] (re)
             {init,checkout,merge,delete,sync} ...
@@ -5,13 +10,13 @@
   [2]
 
 
-Initialization
+Initialization::
 
   $ vb init
   $ test -d .vb/.var
 
 
-Create non-empty Git repository for test
+Create non-empty Git repository for test::
 
   $ git init
   Initialized empty Git repository in * (glob)
@@ -20,7 +25,7 @@ Create non-empty Git repository for test
   $ git commit --message 'First commit' > /dev/null
 
 
-Checkout
+Checkout::
 
   $ vb checkout branch-a
   $ ls .vb
@@ -31,18 +36,18 @@ Checkout
   branch-b
 
 
-Merge
+Merge::
 
   $ vb merge branch-a branch-b
 
 
-Delete
+Delete::
 
   $ vb delete branch-a
   $ ls .vb
   branch-b
 
 
-Sync
+Sync::
 
   $ vb sync

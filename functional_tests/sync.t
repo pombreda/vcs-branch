@@ -1,4 +1,8 @@
-Initialize Git repository
+======
+ Sync
+======
+
+Initialize Git repository::
 
   $ git init
   Initialized empty Git repository in * (glob)
@@ -7,7 +11,7 @@ Initialize Git repository
   $ git commit --message 'First commit' > /dev/null
 
 
-Prepare vb
+Prepare vb::
 
   $ vb init
   $ vb checkout branch-a
@@ -15,7 +19,7 @@ Prepare vb
 
 
 You can use `vb sync` to propagate changes in the root repository to
-workspaces.
+workspaces::
 
   $ echo 'edit' > README.txt
   $ git commit --all --message 'Second commit' > /dev/null
@@ -24,7 +28,7 @@ workspaces.
   * Second commit (glob)
 
 This is like `git fetch`, so, `.git` in the workspaces are updated even
-though it can't be fast-forwarded.
+though it can't be fast-forwarded::
 
   $ git reset --hard HEAD^
   HEAD is now at * (glob)

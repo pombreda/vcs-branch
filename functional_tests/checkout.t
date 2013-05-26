@@ -1,3 +1,7 @@
+==========
+ Checkout
+==========
+
 Initialize Git repository and VB for test::
 
   $ git init
