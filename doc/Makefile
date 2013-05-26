@@ -49,7 +49,7 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 
-html:
+html: prepare
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -175,3 +175,20 @@ pseudoxml:
 	$(SPHINXBUILD) -b pseudoxml $(ALLSPHINXOPTS) $(BUILDDIR)/pseudoxml
 	@echo
 	@echo "Build finished. The pseudo-XML files are in $(BUILDDIR)/pseudoxml."
+
+
+prepare: scenarios
+
+# Copy ../functional_test/*.t to source/scenarios/*.rst
+
+FUNCTIONAL_TESTS = $(wildcard ../functional_tests/*.t)
+SCENARIOS = $(patsubst \
+	../functional_tests/%.t,source/scenarios/%.rst,$(FUNCTIONAL_TESTS))
+
+scenarios: $(SCENARIOS)
+
+source/scenarios:
+	mkdir $@
+
+source/scenarios/%.rst: ../functional_tests/%.t source/scenarios
+	cp $< $@
