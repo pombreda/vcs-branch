@@ -191,4 +191,5 @@ source/scenarios:
 	mkdir $@
 
 source/scenarios/%.rst: ../functional_tests/%.t source/scenarios
-	cp $< $@
+	rm -f $@
+	ln -s ../../$< $@
