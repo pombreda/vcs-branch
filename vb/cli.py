@@ -47,6 +47,19 @@ class MergeApp(TaskRunnerApp):
     def add_arguments(self, parser):
         parser.add_argument(
             'workspaces', metavar='workspace', nargs='+')
+        parser.add_argument(
+            '--reset-to-remote', '-R', action='store_true')
+        parser.add_argument(
+            '--reset', '-r', metavar='branch',
+            help="""
+            When specified, rest to it.
+            """)
+        parser.add_argument(
+            '--old-branch-format', default='{0}.old',
+            help="""
+            When --reset is specified, old branch is created using
+            this template.
+            """)
 
 
 class DeleteApp(TaskRunnerApp):
