@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    commands
+   usages
 
 
 Indices and tables
