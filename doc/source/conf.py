@@ -12,8 +12,14 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
+from os.path import dirname
+import sys
+
+sys.path.insert(0, dirname(dirname(dirname(__file__))))
+
+# To make command "vb" runnable
+os.environ['PATH'] = dirname(__file__) + ':' + os.environ['PATH']
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -31,6 +37,7 @@ import os
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
+    'sphinxcontrib.programoutput',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
